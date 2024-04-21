@@ -1,0 +1,157 @@
+﻿@using X.PagedList.Mvc.Core
+@model X.PagedList.IPagedList<DOANCN.Models.TblMucTieuChi>
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@functions {
+    
+    public string GetChecked(bool? propertyValue)
+    {
+        return propertyValue == true || propertyValue == null ? "checked" : "";
+    }
+}
+
+<style>
+    
+    .pagination-fixed-bottom {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: white;
+        z-index: 1000; 
+    }
+</style>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model[0].Loai)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].Cha)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].Cap)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].Ten)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].ThangDiem)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].Mota)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].TrangThaiMuc)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Loai)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Cha)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Cap)
+                </td>
+                <td>
+                    @if (item.Ten.Length > 10)
+                    {
+                        <span title="@item.Ten">@item.Ten.Substring(0, 10)...</span>
+                        <button type="button" class="btn btn-link view-more" data-toggle="modal" data-target="#detailModal_@item.IdmucTieuChi">Xem thêm</button>
+                    }
+                    else
+                    {
+                        @Html.DisplayFor(modelItem => item.Ten)
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ThangDiem)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Mota)
+                </td>
+                <td>
+                    <div class="form-check form-switch">
+                        <input type="checkbox" class="form-check-input" id="TrangThaiMuc_@item.IdmucTieuChi" @GetChecked(item.TrangThaiMuc) disabled>
+                        <label class="custom-control-label" for="TrangThaiMuc_@item.IdmucTieuChi"></label>
+                    </div>
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.IdmucTieuChi" class="btn btn-primary btn-sm">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <a asp-action="Details" asp-route-id="@item.IdmucTieuChi" class="btn btn-info btn-sm">
+                        <i class="fas fa-info-circle"></i> Details
+                    </a>
+                    <a asp-action="Delete" asp-route-id="@item.IdmucTieuChi" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this item?');">
+                        <i class="fas fa-trash-alt"></i> Delete
+                    </a>
+                </td>
+            </tr>
+        }
+
+        <!-- Modal -->
+        <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="detailModalLabel">Chi tiết Tên</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <span id="modal-content"></span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </tbody>
+</table>
+
+<!-- Phân trang -->
+<div class="pagination-bx rounded-sm gray clearfix pagination-fixed-bottom">
+    @Html.PagedListPager(Model, pageNumber => Url.Action("Index", new { page = pageNumber }), new PagedListRenderOptions()
+{
+    ActiveLiElementClass = "active",
+    PageClasses = new[] { "page-link" },
+    LiElementClasses = new[] { "page-item" },
+    UlElementClasses = new[] { "pagination", "justify-content-center" },
+})
+</div>
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.view-more').click(function () {
+                var content = $(this).siblings('span').attr('title');
+                $('#modal-content').text(content);
+                $('#detailModal').modal('show');
+            });
+
+            // Xử lý sự kiện khi click vào nút "X" hoặc nút "Close"
+            $('#detailModal .close, #detailModal .modal-footer .btn-secondary').click(function () {
+                $('#detailModal').modal('hide');
+            });
+        });
+    </script>
+}

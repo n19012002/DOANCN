@@ -1,0 +1,107 @@
+﻿@model List<DOANCN.Models.TblHocKy>
+
+<main class="ttr-wrapper">
+    <div class="container">
+        <h2>Chọn học kỳ để xem phiếu chấm điểm</h2>
+        <form id="gradeSheetForm" method="post" class="form-inline" action="/ChamDiemRL/GradeSheet">
+            <div class="form-group">
+                <label for="selectedSemesterId" class="mr-2">Chọn học kỳ:</label>
+                <select name="selectedSemesterId" id="selectedSemesterId" class="form-control">
+                    <option value="">Chọn học kỳ</option>
+                    @foreach (var semester in Model)
+                    {
+                        <option value="@semester.Idkyhoc">@semester.NamHoc - @semester.Tenhocky</option>
+                    }
+                </select>
+
+            </div>
+            <input name="__RequestVerificationToken" type="hidden" value="CfDJ8NUkjS-hlNNLsCsDtWNWFjTHb-uySS01HF1DPqRMuheByJXHBopZ-wbW41RSx2_-RoGSORHjzApcyoXc0QCZvDIli-XBRQx8YxQRyOfAcySbkiSZ_9OAGkCUaG4lslYKUBTLQUI5Jkh-QoQrlayFe7I">
+        </form>
+        <div id="gradeSheetResult"></div> <!-- Hiển thị phiếu chấm điểm -->
+
+        <div class="modal-footer" id="noGradeSheetForm" style="display: none;">
+            <button id="createGradeSheetBtn" type="button" class="btn green radius-xl outline" data-dismiss="modal">Tạo Phiếu Chấm Điểm</button>
+            <button id="cancelCreateGradeSheetBtn" type="button" class="btn red outline radius-xl ">Hủy</button>
+        </div>
+    </div>
+</main>
+
+<script>
+    $('#selectedSemesterId').change(function () {
+        var selectedSemesterId = $(this).val();
+        checkGradeSheet(selectedSemesterId);
+    });
+
+    $(document).ready(function () {
+        $('#gradeSheetForm').submit(function (e) {
+            e.preventDefault();
+            checkGradeSheet();
+        });
+
+        $('#createGradeSheetBtn').click(function () {
+            $('#noGradeSheetForm').hide();
+            $('#gradeSheetForm').show();
+        });
+
+        $('#cancelCreateGradeSheetBtn').click(function () {
+            $('#noGradeSheetForm').hide();
+            location.reload();
+        });
+    });
+
+    function checkGradeSheet(selectedSemesterId) {
+        // Kiểm tra xem người dùng đã chọn học kỳ chưa
+        if (!selectedSemesterId) {
+            alert("Vui lòng chọn học kỳ trước khi tạo phiếu.");
+            return;
+        }
+
+        $.ajax({
+            type: 'GET',
+            url: '/ChamDiemRL/CheckGradeSheet',
+            data: { selectedSemesterId: selectedSemesterId },
+            success: function (response) {
+                if (response.message !== undefined) {
+                    alert(response.message);
+                    $('#noGradeSheetForm').show(); // Hiển thị form để chọn tạo phiếu
+                    $('#gradeSheetForm').hide();
+                    $('#gradeSheetResult').empty(); // Xóa nội dung phiếu hiện tại (nếu có)
+                } else {
+                    $('#gradeSheetResult').html(response);
+                    $('#noGradeSheetForm').hide();
+                }
+            },
+            error: function () {
+                alert('Đã xảy ra lỗi khi kiểm tra phiếu chấm điểm.');
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        $('#createGradeSheetBtn').click(function () {
+            var selectedSemesterId = $('#selectedSemesterId').val(); // Lấy ID của học kỳ từ dropdown
+            createGradeSheet(selectedSemesterId); // Gọi hàm tạo phiếu chấm điểm
+        });
+    });
+
+    function createGradeSheet(selectedSemesterId) {
+        $.ajax({
+            type: 'POST',
+            url: '/ChamDiemRL/GradeSheet',
+            data: { selectedSemesterId: selectedSemesterId },
+            success: function (response) {
+                if (response.success) {
+                    alert(response.message); // Thông báo thành công
+                    location.reload();
+                } else {
+                    alert('Đã xảy ra lỗi khi tạo phiếu chấm điểm.');
+                }
+            },
+            error: function () {
+                alert('Đã xảy ra lỗi khi tạo phiếu chấm điểm.');
+            }
+        });
+    }
+
+
+</script>

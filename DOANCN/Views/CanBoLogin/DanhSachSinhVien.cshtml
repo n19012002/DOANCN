@@ -1,0 +1,52 @@
+﻿@model List<TblSinhvien>
+@{
+    Layout = "~/Views/Shared/_LayoutCanBo.cshtml";
+}
+<h1>Danh sách sinh viên</h1>
+
+<style>
+    
+    .pagination-fixed-bottom {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: white;
+        z-index: 1000; 
+    }
+</style>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model[0].Msv)
+            </th>
+            <th>
+                Họ & Tên
+            </th>
+            <th>
+                Giới Tính
+            </th>
+            <th>
+               Lớp Hành Chính
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+       
+        @foreach (var sinhvien in Model)
+        {
+            <tr>
+                <td>@sinhvien.Msv</td>
+                <td>@(sinhvien.Ho + " " + sinhvien.TenDem + " " + sinhvien.Ten)</td>
+                <td>@sinhvien.MaLopNavigation.TenLop</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+

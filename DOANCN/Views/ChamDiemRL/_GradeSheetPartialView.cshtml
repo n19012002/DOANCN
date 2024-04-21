@@ -1,0 +1,78 @@
+﻿@model DOANCN.Models.TblPhieurenluyen
+
+
+<div class="row">
+    <!-- Your Blog List -->
+    <div class="col-lg-12 m-b30">
+        <div class="widget-box">
+            <div class="wc-title">
+                <h1>Phiếu chấm điểm</h1>
+            </div>
+            <div class="widget-inner">
+                    <div class="card-courses-list admin-courses">
+                        
+                        <div class="card-courses-full-dec">
+                            <div class="card-courses-title">
+                            <h4><span>Kỳ học:</span>@Model.IdkyhocNavigation.NamHoc - @Model.IdkyhocNavigation.Tenhocky</h4>
+                            </div>
+                            <div class="card-courses-list-bx">
+                                <ul class="card-courses-view">
+
+                                    <li class="card-courses-categories">
+                                        <h5>FULL Name</h5>
+                                    <h4>@Model.IdsinhvienNavigation.Ho @Model.IdsinhvienNavigation.TenDem @Model.IdsinhvienNavigation.Ten</h4>
+                                    </li>
+
+                                    <li class="card-courses-stats">
+                                        <h5>Trạng thái phiếu</h5>
+                                        <div class="custom-control custom-switch">
+                                        @if (Model.Trangthaiphieu.HasValue && Model.Trangthaiphieu.Value)
+                                        {
+                                            <span class="text-success">Hoàn thành</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-danger">Chưa hoàn thành</span>
+
+                                        }
+                                        </div>
+                                    </li>
+
+
+                                </ul>
+                            </div>
+                            <div class="row card-courses-dec">
+                                <div class="col-md-12">
+                                    <h6 class="m-b10">Chi tiết</h6>
+                                <p>@Model.Thoigiannap</p>
+                                <p>@Model.Nguoicham</p>
+                                </div>
+                                <div class="col-md-12">
+                                @if (Model.Trangthaiphieu.HasValue && Model.Trangthaiphieu.Value)
+                                {
+                                    <button type="button" class="btn btn-primary">Sửa</button>
+                                    <a class="btn btn-primary" href="/ChiTietDiemRL/XemDiem?idPhieu=@Model.IdphieuRl">Xem</a>
+
+                                }
+                                else
+                                {
+
+                                    <form method="post" action="/ChiTietDiemRL/ChuyenDenNhapDiem?idPhieu=@Model.IdphieuRl">
+                                        <button type="submit" class="btn btn-primary">Chấm ngay</button>
+                                    </form>
+
+                                  
+                                }
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+            </div>
+            
+
+        </div>
+    </div>
+    <!-- Your Blog List END -->
+</div>

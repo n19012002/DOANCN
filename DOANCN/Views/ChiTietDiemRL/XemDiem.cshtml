@@ -1,0 +1,73 @@
+﻿@model Tuple<List<DOANCN.Models.TblChitietPhieuRl>, List<DOANCN.Models.TblMucTieuChi>, List<TblPhieurenluyen>>
+
+@{
+    ViewData["Title"] = "Chi tiết điểm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<form id="dataForm" method="post" action="/ChiTietDiemRL/Save">
+    <input type="hidden" id="idPhieu" name="idPhieu" value="@ViewData["IdPhieu"]" />
+
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
+
+    <main class="ttr-wrapper">
+        <div class="container-fluid">
+            <h1>Phiếu chấm điểm của @Context.Session.GetString("UserName")</h1>
+            <div class="row">
+                <div class="col-lg-12 m-b30 table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nội dung đánh giá</th>
+                                <th>Diểm tối đa</th>
+                                <th>Điểm lớp trưởng đánh giá</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var mucI in Model.Item2.Where(m => m.Cap == 1 && m.Cha == 0))
+                            {
+                                <tr>
+                                    <td colspan="3">
+                                        <h5 style="max-width: 500px; word-wrap: break-word;">@mucI.Loai .@mucI.Ten</h5>
+                                    </td>
+                                </tr>
+                                @foreach (var mucII in Model.Item1.Where(m => m.IdmucTieuChiNavigation.Cap == 2 && m.IdmucTieuChiNavigation.Cha == mucI.IdmucTieuChi))
+                                {
+                                    <tr>
+                                        <td>@mucII.IdmucTieuChiNavigation.Loai .@mucII.IdmucTieuChiNavigation.Ten</td>
+                                        <td>@mucII.DiemTuCham</td>
+                                        <td>
+                                            @mucII.DiemLopTruong
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                    <span id="total-score">
+                        Tổng điểm: @{
+                            int? totalScore = 0;
+                            foreach (var phieu in Model.Item3)
+                            {
+                                totalScore += phieu.TongDiem; // Giả sử điểm được lấy từ trường TongDiem của TblPhieurenluyen
+                            }
+                            @totalScore
+                        }
+                    </span>
+                </div>
+            </div>
+        </div>
+    </main>
+</form>

@@ -1,0 +1,109 @@
+﻿@model List<TblDiemrenluyen>
+
+<div class="ttr-wrapper">
+    <h2>Danh sách điểm rèn luyện</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th>Năm học</th>
+                <th>Kỳ học</th>
+                <th>Điểm RL</th>
+                <th>Xếp loại</th>
+                <th>Điểm cả năm</th>
+                <th>Xếp loại cả năm</th>
+                <th>Ngày cập nhật</th>
+                <th>Mô tả</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                var i = 1;
+            }
+            @foreach (var item in Model)
+            {
+                var diemTrungBinh = 0.0;
+                var namHoc = item.IdkyhocNavigation.NamHoc;
+
+                foreach (var diem in ViewBag.DiemNamHoc)
+                {
+                    if (diem.NamHoc == namHoc)
+                    {
+                        diemTrungBinh = diem.DiemTrungBinh;
+                        break;
+                    }
+                }
+
+                <tr>
+                    <td>@(i++)</td>
+                    <td>@item.IdkyhocNavigation.NamHoc</td>
+                    <td>@item.IdkyhocNavigation.Tenhocky</td>
+                    <td>@item.DiemRl</td>
+                    <td>@GetXepLoai(item.DiemRl)</td>
+                    <td>@LamTronDiem(diemTrungBinh)</td>
+                    <td>@GetXepLoaiCaNam(diemTrungBinh)</td>
+                    <td>@(item.NgayCapNhat.HasValue ? item.NgayCapNhat.Value.ToString("dd/MM/yyyy") : "")</td>
+                    <td>@item.MoTa</td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+</div>
+
+@functions {
+    public string GetXepLoai(int? diem)
+    {
+        if (diem >= 90)
+        {
+            return "Xuất sắc";
+        }
+        else if (diem >= 80 && diem <= 89)
+        {
+            return "Tốt";
+        }
+        else if (diem >= 65 && diem <= 79)
+        {
+            return "Khá";
+        }
+        else
+        {
+            return "Trung bình";
+        }
+    }
+
+    public string GetXepLoaiCaNam(double diem)
+    {
+        if (diem >= 90)
+        {
+            return "Xuất sắc";
+        }
+        else if (diem >= 80 && diem <= 89)
+        {
+            return "Tốt";
+        }
+        else if (diem >= 65 && diem <= 79)
+        {
+            return "Khá";
+        }
+        else
+        {
+            return "Trung bình";
+        }
+    }
+
+    public int LamTronDiem(double diem)
+    {
+        double phanThapPhan = diem - Math.Floor(diem); // Lấy phần thập phân của số
+
+        if (phanThapPhan >= 0.5)
+        {
+            return (int)Math.Ceiling(diem); // Làm tròn lên nếu phần thập phân lớn hơn hoặc bằng 0.5
+        }
+        else
+        {
+            return (int)Math.Floor(diem); // Làm tròn xuống trong trường hợp còn lại
+        }
+    }
+
+}

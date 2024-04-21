@@ -1,0 +1,47 @@
+﻿@model IEnumerable<Menu>
+
+<!-- ======= Sidebar ======= -->
+<div class="ttr-sidebar">
+    <div class="ttr-sidebar-wrapper content-scroll">
+        <!-- side menu logo start -->
+        <div class="ttr-sidebar-logo">
+            <a href="#"><img alt="" src="~/admin/assets/images/logo.png" width="122" height="27"></a>
+            <div class="ttr-sidebar-toggle-button">
+                <i class="ti-arrow-left"></i>
+            </div>
+        </div>
+        <!-- side menu logo end -->
+        <!-- sidebar menu start -->
+        <nav class="ttr-sidebar-navi">
+            <ul>
+                @foreach (var menuItem in Model.Where(m => m.ItemLevel == 1).OrderBy(n => n.ItemOrder))
+                {
+                    var Pid = menuItem.AdminMenuId;
+                    var Smenu = Model.Where(p => p.ParentLevel == Pid).OrderBy(p => p.ItemOrder).ToList();
+                    <li>
+                        <a href="/@menuItem.AreaName/@menuItem.ControllerName/@menuItem.ActionName" class="ttr-material-button">
+                            <span class="ttr-icon"><i class="@menuItem.Icon"></i></span>
+                            <span class="ttr-label">@menuItem.ItemName</span>
+                            <span class="ttr-arrow-icon"><i class="@menuItem.ItemTarget"></i></span>
+                        </a>
+
+                        @if (Smenu.Any())
+                        {
+                            <ul>
+                                @foreach (var subMenu in Smenu)
+                                {
+                                    <li>
+                                        <a href="/@subMenu.AreaName/@subMenu.ControllerName/@subMenu.ActionName" class="ttr-material-button">
+                                            <span class="ttr-label">@subMenu.ItemName</span>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </li>
+                }
+            </ul>
+        </nav>
+        <!-- sidebar menu end -->
+    </div>
+</div>

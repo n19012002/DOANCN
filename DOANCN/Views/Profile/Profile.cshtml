@@ -1,0 +1,149 @@
+﻿@model TblSinhvien	
+<!--Main container start -->
+<main class="ttr-wrapper">
+	<div class="container-fluid">
+		<div class="db-breadcrumb">
+			<h4 class="breadcrumb-title">User Profile</h4>
+			<ul class="db-breadcrumb-list">
+				<li><a href="#"><i class="fa fa-home"></i>Home</a></li>
+				<li>User Profile</li>
+			</ul>
+		</div>
+		<div class="row">
+			<!-- Your Profile Views Chart -->
+			<div class="col-lg-12 m-b30">
+				<div class="widget-box">
+					<div class="wc-title">
+						<h4>User Profile</h4>
+					</div>
+					<div class="widget-inner">
+						<form class="edit-profile m-b30">
+							<div class="">
+								<div class="form-group row">
+									<div class="col-sm-10  ml-auto">
+										<h3>1. Thông tin cơ bản</h3>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="col-sm-2 col-form-label">Mã sinh viên</label>
+									<div class="col-sm-7">
+										<input class="form-control" type="text" value="@Model.Msv" readonly>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="col-sm-2 col-form-label">Họ&Tên</label>
+									<div class="col-sm-7">
+										<input class="form-control" type="text" value="@Model.Ho @Model.TenDem @Model.Ten" readonly>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="col-sm-2 col-form-label">Số CCCD</label>
+									<div class="col-sm-7">
+										<input class="form-control" type="text" value="@Model.Cccd" readonly>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="col-sm-2 col-form-label">Giới tính</label>
+									<div class="col-sm-7">
+										@if (Model.Gioitinh.HasValue)
+										{
+											<input class="form-control" type="text" value="@(Model.Gioitinh.Value ? "Nam" : "Nữ")" readonly>
+										}
+										else
+										{
+											<span class="text-muted">Chưa xác định</span>
+										}
+									</div>
+
+								</div>
+								<div class="form-group row">
+									<label class="col-sm-2 col-form-label">Số Diện thoại</label>
+									<div class="col-sm-7">
+										<input class="form-control" type="text" value="@Model.Sodienthoai" readonly>
+									</div>
+								</div>
+								
+
+								<div class="seperator"></div>
+
+								<div class="form-group row">
+									<div class="col-sm-10 ml-auto">
+										<h3>2. Thông tin lớp hành chính</h3>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="col-sm-2 col-form-label">Ngành học</label>
+									<div class="col-sm-7">
+										<input class="form-control" type="text" value="@Model.MaNganhNavigation.TenNganh" readonly>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="col-sm-2 col-form-label">Trường/Khoa/Viện</label>
+									<div class="col-sm-7">
+										<input class="form-control" type="text" value="@Model.MaNganhNavigation.MaKhoaNavigation.TenKhoa" readonly>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="col-sm-2 col-form-label">Trạng Thái</label>
+									<div class="col-sm-7">
+										<input class="form-control" type="text" value="@Model.MatrangthaiNavigation.Tentrangthai" readonly>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="col-sm-2 col-form-label">Lớp hành chính</label>
+									<div class="col-sm-7">
+										<input class="form-control" type="text" value="@Model.MaLopNavigation.TenLop" readonly>
+									</div>
+								</div>
+								
+								<div class="form-group row">
+									<label class="col-sm-2 col-form-label">Chức vụ</label>
+									<div class="col-sm-7">
+										<input class="form-control" type="text" value="@Model.MachucvuNavigation.Tenchucvu" readonly>
+									</div>
+								</div>
+								
+
+								<div class="m-form__seperator m-form__seperator--dashed m-form__seperator--space-2x"></div>
+
+								<div class="form-group row">
+									<div class="col-sm-10 ml-auto">
+										<h3 class="m-form__section">3. Social Links</h3>
+									</div>
+								</div>
+
+								<div class="form-group row">
+									<label class="col-sm-2 col-form-label">Linkedin</label>
+									<div class="col-sm-7">
+										<input class="form-control" type="text" value="www.linkedin.com" readonly>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="col-sm-2 col-form-label">Facebook</label>
+									<div class="col-sm-7">
+										<input class="form-control" type="text" value="www.facebook.com" readonly>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="col-sm-2 col-form-label">Twitter</label>
+									<div class="col-sm-7">
+										<input class="form-control" type="text" value="www.twitter.com" readonly>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class="col-sm-2 col-form-label">Instagram</label>
+									<div class="col-sm-7">
+										<input class="form-control" type="text" value="www.instagram.com" readonly>
+									</div>
+								</div>
+							</div>
+							
+						</form>
+						
+					</div>
+				</div>
+			</div>
+			<!-- Your Profile Views Chart END-->
+		</div>
+	</div>
+</main>
