@@ -37,7 +37,7 @@ namespace DOANCN.Controllers
         public IActionResult HienThi(int kiHocId)
         {
 
-
+            HttpContext.Session.SetInt32("Idhocky", kiHocId);
             string maNganh = HttpContext.Session.GetString("MaNganh");
             int? maLop = HttpContext.Session.GetInt32("MaLop");
 

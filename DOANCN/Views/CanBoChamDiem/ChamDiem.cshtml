@@ -90,11 +90,33 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
+            // Hàm tính tổng điểm lớp trưởng
+            function calculateTotalLopTruongScore() {
+                var totalLopTruongScore = 0; // Tổng điểm lớp trưởng
+
+                $('input[name^="data"]').each(function () {
+                    var enteredValue = parseInt($(this).val());
+                    var maxScore = parseInt($(this).closest('tr').find('td:eq(1)').text());
+                    if (!isNaN(enteredValue) && enteredValue <= maxScore) {
+                        totalLopTruongScore += enteredValue; // Thêm điểm hợp lệ vào tổng điểm lớp trưởng
+                    }
+                });
+
+                // Hiển thị tổng điểm lớp trưởng
+                $('#total-lop-truong-score').text('Tổng điểm lớp trưởng: ' + totalLopTruongScore);
+            }
+
+            // Gọi hàm tính tổng điểm lớp trưởng khi có sự thay đổi trong các input
+            $('input[name^="data"]').on('change', function () {
+                calculateTotalLopTruongScore();
+            });
+
             $('#dataForm').submit(function (event) {
                 event.preventDefault(); // Ngăn chặn hành động mặc định của form
 
                 // Kiểm tra xem có ô nào có giá trị không hợp lệ không
                 var invalidInputExists = false;
+
                 $('input[name^="data"]').each(function () {
                     var enteredValue = parseInt($(this).val());
                     var maxScore = parseInt($(this).closest('tr').find('td:eq(1)').text());
@@ -134,8 +156,27 @@
                     type: 'POST',
                     data: data,
                     success: function (response) {
+                        // Thêm một bản ghi mới vào lịch sử duyệt web
+                        window.history.pushState({ path: window.location.href }, '', window.location.href);
+                        // Vô hiệu hóa nút "Lưu" sau khi đã gửi dữ liệu thành công
+                        $('.btn-primary').prop('disabled', true);
                         alert(response.message); // Hiển thị thông báo thành công
-                        window.location.href = "/CanBoChamDiem";
+                        // Lấy giá trị kiHocId từ session
+                        var kiHocId = parseInt('@Context.Session.GetInt32("Idhocky")');
+
+                        // Chuyển hướng lại và truyền giá trị kiHocId cho controller bằng AJAX
+                        $.ajax({
+                            url: '/CanBoChamDiem/HienThi',
+                            type: 'POST',
+                            data: { kiHocId: kiHocId },
+                            success: function (response) {
+                                // Cập nhật lại nội dung của trang với dữ liệu trả về từ controller
+                                $('body').html(response);
+                            },
+                            error: function (xhr, status, error) {
+                                console.log('Đã xảy ra lỗi khi lấy dữ liệu từ server:', error);
+                            }
+                        });
                     },
                     error: function (xhr, status, error) {
                         var errorMessage = xhr.responseJSON.errorMessage;
@@ -147,3 +188,5 @@
         });
     </script>
 }
+
+

@@ -81,31 +81,53 @@
 </form>
 
 <script>
-    function validateInput() {
-        var inputs = document.querySelectorAll('input[name^="DiemTuDanhGia["]');
+    // Hàm kiểm tra trạng thái của trang
+    function checkPageState() {
+        // Kiểm tra xem trang có lưu trạng thái không
+        var savedState = sessionStorage.getItem('pageState');
+        if (savedState && savedState === 'submitted') {
 
-        var isValid = true;
+            return true;
+        } else {
 
-        inputs.forEach(function (input) {
-            var enteredValue = parseFloat(input.value);
-            var thangDiem = parseFloat(input.dataset.thangdiem);
-            var errorMessage = input.parentElement.querySelector('.error-message');
+            return false;
+        }
+    }
 
-            if (!input.value.trim() || enteredValue > thangDiem) {
-                
-                errorMessage.style.display = 'inline';
-                input.classList.add('invalid-input');
-                isValid = false;
-            } else {
-               
-                errorMessage.style.display = 'none';
-                input.classList.remove('invalid-input');
-            }
-        });
 
-       
-        if (!isValid) {
+    function validateInput(event) {
+        // Kiểm tra trạng thái của trang
+        if (checkPageState()) {
+            // Nếu trang đã được gửi dữ liệu trước đó, ngăn chặn việc submit
             event.preventDefault();
+            // Hiển thị thông báo
+            alert("Bạn đã gửi phiếu. Vui lòng không spam.");
+            window.location.href = '/home';
+        } else {
+
+            var inputs = document.querySelectorAll('input[name^="DiemTuDanhGia["]');
+            var isValid = true;
+
+            inputs.forEach(function (input) {
+                var enteredValue = parseFloat(input.value);
+                var thangDiem = parseFloat(input.dataset.thangdiem);
+                var errorMessage = input.parentElement.querySelector('.error-message');
+
+                if (!input.value.trim() || enteredValue > thangDiem) {
+                    errorMessage.style.display = 'inline';
+                    input.classList.add('invalid-input');
+                    isValid = false;
+                } else {
+                    errorMessage.style.display = 'none';
+                    input.classList.remove('invalid-input');
+                }
+            });
+
+            if (!isValid) {
+                event.preventDefault();
+            } else {
+                sessionStorage.setItem('pageState', 'submitted');
+            }
         }
     }
 
@@ -128,16 +150,16 @@
         document.getElementById('total-score').textContent = 'Tổng điểm: ' + totalScore;
     }
 
-    
+
     setTotalScore();
 
-   
+
     var inputs = document.querySelectorAll('input[name^="DiemTuDanhGia["]');
     inputs.forEach(function (input) {
         input.addEventListener('input', function () {
             setTotalScore();
         });
     });
-
     document.getElementById('dataForm').addEventListener('submit', validateInput);
 </script>
+
