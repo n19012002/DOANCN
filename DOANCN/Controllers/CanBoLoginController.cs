@@ -45,7 +45,7 @@ namespace DOANCN.Controllers
                     string fullName = string.Concat(user.IdsinhvienNavigation.Ho, " ", user.IdsinhvienNavigation.TenDem, " ", user.IdsinhvienNavigation.Ten);
                     HttpContext.Session.SetString("UserName", fullName);
 
-                    // Lưu MaKhoa và MaLop vào session
+                
                     HttpContext.Session.SetString("MaNganh", user.IdsinhvienNavigation.MaNganh);
                     HttpContext.Session.SetInt32("MaLop", user.IdsinhvienNavigation.MaLop ?? 0);
                     TempData["SuccessMessage"] = "Đăng nhập thành công!";
@@ -64,18 +64,30 @@ namespace DOANCN.Controllers
 
         public IActionResult DanhSachSinhVien()
         {
-            // Lấy MaNganh và MaLop từ session
             string maNganh = HttpContext.Session.GetString("MaNganh");
             int? maLop = HttpContext.Session.GetInt32("MaLop");
 
-            // Truy vấn danh sách sinh viên thuộc ngành và lớp đã chọn
+            string tenLop = "";
+
+            var lop = _context.TblLops.FirstOrDefault(l => l.MaLop == maLop);
+            if (lop != null)
+            {
+                tenLop = lop.TenLop;
+            }
+
             var danhSachSinhVien = _context.TblSinhviens
                 .Include(u => u.MaLopNavigation)
                 .Include(u => u.MaNganhNavigation)
+                .ThenInclude(mn => mn.MaKhoaNavigation)
+                .Include(u => u.MatrangthaiNavigation)
                 .Where(sv => sv.MaNganh == maNganh && sv.MaLop == maLop)
+                .OrderBy(sv => sv.Ten)
                 .ToList();
 
+
+            ViewBag.TenLop = tenLop;
             return View(danhSachSinhVien);
         }
+
     }
 }

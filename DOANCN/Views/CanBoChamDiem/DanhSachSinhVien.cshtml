@@ -1,0 +1,145 @@
+﻿@{
+    ViewData["Title"] = "Danh Sách Sinh Viên";
+    Layout = "~/Views/Shared/_LayoutCanBo.cshtml";
+}
+@functions {
+    string GetCssClassForStatus(long idSinhVien)
+    {
+        if (ViewBag.StatusDict.ContainsKey(idSinhVien))
+        {
+            var status = ViewBag.StatusDict[idSinhVien];
+            switch (status.Status)
+            {
+                case "Cán Bộ Chưa chấm":
+                    return "can-bo-chua-cham";
+                case "Đã chấm":
+                    return "can-bo-da-cham";
+                default:
+                    return "chua-cham";
+            }
+        }
+        else
+        {
+            return "chua-cham";
+        }
+    }
+}
+
+<style>
+    /* CSS cho các trạng thái */
+    .chua-cham {
+        background-color: #ffcccc; /* Đỏ nhạt */
+    }
+
+    .can-bo-chua-cham {
+        background-color: #ffffcc; /* Vàng nhạt */
+    }
+</style>
+
+<h2>Danh Sách Sinh Viên @ViewBag.TenLop</h2>
+
+<!-- Nút lọc -->
+<div class="form-group">
+    <button class="btn btn-primary rounded-pill m-2 filter-btn" data-filter="">Tất cả</button>
+    <button class="btn btn-primary rounded-pill m-2 filter-btn" data-filter="can-bo-chua-cham">Cán Bộ Chưa chấm</button>
+    <button class="btn btn-primary rounded-pill m-2 filter-btn" data-filter="can-bo-da-cham">Cán Bộ Đã chấm</button>
+    <button class="btn btn-primary rounded-pill m-2 filter-btn" data-filter="chua-cham">Chưa chấm</button>
+</div>
+<br />
+@if (ViewBag.DanhSachSinhVien != null && ViewBag.StatusDict != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th>Mã Sinh Viên</th>
+                <th>Họ và Tên</th>
+                <th>Trạng Thái Phiếu</th>
+                <th>Điểm tự chấm</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                var i = 1;
+            }
+            @foreach (var sinhVien in ViewBag.DanhSachSinhVien)
+            {
+                <tr class="@GetCssClassForStatus(sinhVien.Idsinhvien)" style="vertical-align: middle;">
+                    <td>@(i++)</td>
+                    <td style="vertical-align: middle;">@sinhVien.Msv</td>
+                    <td style="vertical-align: middle;">@(sinhVien.Ho + " " + sinhVien.TenDem + " " + sinhVien.Ten)</td>
+                    <td style="vertical-align: middle;">
+                        @if (ViewBag.StatusDict.ContainsKey(sinhVien.Idsinhvien))
+                        {
+                            var status = ViewBag.StatusDict[sinhVien.Idsinhvien];
+                            switch (status.Status)
+                            {
+                                case "Cán Bộ Chưa chấm":
+                                    <span>Cán Bộ Chưa chấm</span>
+                                    break;
+                                case "Đã chấm":
+                                    <span>Đã chấm</span>
+                                    break;
+                                default:
+                                    <span>@status.Status</span>
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            <span>Chưa chấm</span>
+                        }
+                    </td>
+                    <td style="vertical-align: middle; text-align: center;">
+                        @if (ViewBag.StatusDict.ContainsKey(sinhVien.Idsinhvien) && ViewBag.StatusDict[sinhVien.Idsinhvien].Status == "Cán Bộ Chưa chấm")
+                        {
+                            <form id="formChamDiem" action="@Url.Action("ChamDiem", "CanBoChamDiem")" method="post">
+                                <input type="hidden" name="idSinhVien" value="@sinhVien.Idsinhvien" />
+                                <input type="hidden" name="idPhieu" value="@ViewBag.StatusDict[sinhVien.Idsinhvien].PhieuId" />
+                                <button type="submit" class="btn btn-success rounded-pill m-2">Chấm</button>
+                            </form>
+                        }
+                        @if (ViewBag.StatusDict.ContainsKey(sinhVien.Idsinhvien) && ViewBag.StatusDict[sinhVien.Idsinhvien].Status == "Sinh viên chưa tự chấm")
+                        {
+                            <div style="display: flex; align-items: center; justify-content: center;">
+                                <a href="@Url.Action("ChamDiem1", "CanBoChamDiem", new { id = sinhVien.Idsinhvien, idPhieu = ViewBag.StatusDict[sinhVien.Idsinhvien].PhieuId })" class="btn btn-secondary rounded-pill m-2">Thông báo</a>
+                            </div>
+                        }
+                        @if (ViewBag.StatusDict.ContainsKey(sinhVien.Idsinhvien) && ViewBag.StatusDict[sinhVien.Idsinhvien].Status == "Đã chấm")
+                        {
+                            <form id="formXemDiem" action="@Url.Action("XemDiem", "CanBoChamDiem")" method="post">
+                                <input type="hidden" name="idSinhVien" value="@sinhVien.Idsinhvien" />
+                                <input type="hidden" name="idPhieu" value="@ViewBag.StatusDict[sinhVien.Idsinhvien].PhieuId" />
+                                <button type="submit" class="btn btn-info rounded-pill m-2">Xem</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Không có sinh viên nào được tìm thấy.</p>
+}
+
+@section Scripts {
+    <script>
+        // Sự kiện thay đổi lọc
+        $(document).ready(function () {
+            $('.filter-btn').click(function () {
+                var filterValue = $(this).data('filter');
+
+                $('.table tbody tr').hide();
+
+                if (filterValue === '') {
+                    $('tr').show();
+                } else {
+                    $('.' + filterValue).show();
+                }
+            });
+        });
+    </script>
+}

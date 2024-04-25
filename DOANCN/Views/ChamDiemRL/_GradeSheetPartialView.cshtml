@@ -51,13 +51,16 @@
                                 @if (Model.Trangthaiphieu.HasValue && Model.Trangthaiphieu.Value)
                                 {
                                     <button type="button" class="btn btn-primary">Sửa</button>
-                                    <a class="btn btn-primary" href="/ChiTietDiemRL/XemDiem?idPhieu=@Model.IdphieuRl">Xem</a>
-
+                                    <form method="post" action="/ChiTietDiemRL/XemDiem">
+                                        <input type="hidden" name="idPhieu" value="@Model.IdphieuRl" />
+                                        <button type="submit" class="btn btn-primary">Xem</button>
+                                    </form>
                                 }
                                 else
                                 {
 
-                                    <form method="post" action="/ChiTietDiemRL/ChuyenDenNhapDiem?idPhieu=@Model.IdphieuRl">
+                                    <form method="post" action="/ChiTietDiemRL/ChuyenDenNhapDiem">
+                                        <input type="hidden" name="idPhieu" value="@Model.IdphieuRl" />
                                         <button type="submit" class="btn btn-primary">Chấm ngay</button>
                                     </form>
 

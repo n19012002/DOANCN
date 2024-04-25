@@ -1,4 +1,4 @@
-/*
+﻿/*
 ======================================
   * CSS TABLE CONTENT *  
 ======================================
@@ -2945,6 +2945,16 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#391800', end
 	display: flex;
 	vertical-align: middle;
 }
+	.account-head p {
+		font-family: 'Times New Roman';
+		position: absolute;
+		top: 20px; /* Điều chỉnh vị trí theo ý muốn */
+		left: 50%; /* Để căn giữa theo chiều ngang */
+		transform: translateX(-50%); /* Dịch chuyển về trái 50% của chiều rộng của chính nó */
+		color: #fff; /* Màu chữ */
+		font-size: 24px; /* Kích thước chữ */
+		font-weight: bold; /* Độ đậm của chữ */
+	}
 .account-head a{
 	display:block;
 	width:100%;
@@ -3109,6 +3119,18 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#391800', end
 		width: 100%;
 		min-width: 100%;
 		height: 200px;
+	}
+	.account-head a{
+		width: 80px;
+		position: absolute;
+		top: 10px; /* Đặt khoảng cách từ trên xuống */
+		left: 50%; /* Canh giữa */
+		transform: translateX(-50%);
+	}
+	.account-head p{
+		
+		top: 100px; /* Đặt khoảng cách từ trên xuống */
+
 	}
 	.account-form {
 		display: block;

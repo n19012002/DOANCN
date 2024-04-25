@@ -2,7 +2,7 @@
 @{
     Layout = "~/Views/Shared/_LayoutCanBo.cshtml";
 }
-<h1>Danh sách sinh viên</h1>
+<h1>Danh sách sinh viên @ViewBag.TenLop</h1>
 
 <style>
     
@@ -21,6 +21,9 @@
     <thead>
         <tr>
             <th>
+                STT
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model[0].Msv)
             </th>
             <th>
@@ -32,17 +35,50 @@
             <th>
                Lớp Hành Chính
             </th>
+            <th>
+                Ngành học
+            </th>
+            <th>
+                Trường/Khoa/Viện
+            </th>
+            <th>
+                Trạng thái
+            </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-       
+        @{
+            var i = 1;
+        }
         @foreach (var sinhvien in Model)
         {
             <tr>
+                <td>@(i++)</td>
                 <td>@sinhvien.Msv</td>
                 <td>@(sinhvien.Ho + " " + sinhvien.TenDem + " " + sinhvien.Ten)</td>
+                <td>
+                    @if (sinhvien.Gioitinh.HasValue)
+                    {
+                        if (sinhvien.Gioitinh.Value)
+                        {
+                            <text>Nam</text>
+                        }
+                        else
+                        {
+                            <text>Nữ</text>
+                        }
+                    }
+                    else
+                    {
+                        <text>Chưa xác định</text>
+                    }
+                </td>
+
                 <td>@sinhvien.MaLopNavigation.TenLop</td>
+                <td>@sinhvien.MaNganhNavigation.TenNganh</td>
+                <td>@sinhvien.MaNganhNavigation.MaKhoaNavigation.TenKhoa</td>
+                <td>@sinhvien.MatrangthaiNavigation.Tentrangthai</td>
             </tr>
         }
     </tbody>

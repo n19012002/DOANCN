@@ -1,0 +1,20 @@
+﻿@{
+    ViewData["Title"] = "Chấm Điểm";
+    Layout = "~/Views/Shared/_LayoutCanBo.cshtml";
+
+}
+
+<h2>Chấm Điểm</h2>
+
+<form id="chamDiemForm" method="post" action="@Url.Action("HienThi", "CanBoChamDiem")">
+    <div class="form-group">
+        <label for="kiHocDropdown">Chọn Kì Học:</label>
+        <select id="kiHocDropdown" name="kiHocId" class="form-control">
+            @foreach (var kiHoc in ViewBag.DanhSachKiHoc)
+            {
+                <option value="@kiHoc.Value">@kiHoc.Text</option>
+            }
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Hiển thị</button>
+</form>

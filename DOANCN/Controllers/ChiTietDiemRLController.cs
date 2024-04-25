@@ -57,18 +57,18 @@ namespace DOANCN.Controllers
                             IdmucTieuChi = idmucTieuChi,
                             DiemTuCham = Convert.ToInt32(diemTuDanhGia),
                             DiemLopTruong = Convert.ToInt32(diemLopTruongDanhGia),
-                            NgayCapnhat = DateTime.Now // Thêm ngày cập nhật (nếu cần)
+                            NgayCapnhat = DateTime.Now 
                         };
 
                         _context.TblChitietPhieuRls.Add(chitietPhieu);
                     }
                 }
 
-                // Lấy phiếu từ cơ sở dữ liệu và cập nhật trạng thái
+              
                 var phieu = _context.TblPhieurenluyens.FirstOrDefault(p => p.IdphieuRl == idPhieu);
                 if (phieu != null)
                 {
-                    phieu.Trangthaiphieu = true; // Cập nhật trạng thái thành đã hoàn thành
+                    phieu.Trangthaiphieu = true; 
                     phieu.TongDiem = totalScore;
                 }
                 _context.SaveChanges();
@@ -83,13 +83,13 @@ namespace DOANCN.Controllers
 
         public IActionResult XemDiem(int idPhieu)
         {
-            // Lấy thông tin chi tiết phiếu dựa trên idPhieu và bổ sung thông tin về mục tiêu chí
+            
             var chiTietPhieu = _context.TblChitietPhieuRls
-                .Include(c => c.IdmucTieuChiNavigation) // Bổ sung thông tin về mục tiêu chí
+                .Include(c => c.IdmucTieuChiNavigation) 
                 .Where(c => c.IdphieuRl == idPhieu)
                 .ToList();
 
-            // Kiểm tra nếu không tìm thấy chi tiết phiếu, trả về trang không tìm thấy
+           
             if (chiTietPhieu == null)
             {
                 return NotFound();
@@ -98,10 +98,10 @@ namespace DOANCN.Controllers
             var Phieu = _context.TblPhieurenluyens
                 .Where(c => c.IdphieuRl == idPhieu)
                 .ToList();
-            // Lấy danh sách mục tiêu chí
+        
             var mucTieuChi = _context.TblMucTieuChis.ToList();
 
-            // Tạo một Tuple chứa cả hai danh sách chi tiết phiếu và mục tiêu chí
+          
             var viewModel = new Tuple<List<TblChitietPhieuRl>, List<TblMucTieuChi>, List<TblPhieurenluyen>>(chiTietPhieu, mucTieuChi, Phieu);
 
             return View(viewModel);

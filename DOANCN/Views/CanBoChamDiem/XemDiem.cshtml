@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Chi tiết điểm";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_LayoutCanBo.cshtml";
 }
 
 <form id="dataForm" method="post" action="/ChiTietDiemRL/Save">
@@ -61,7 +61,7 @@
                             int? totalScore = 0;
                             foreach (var phieu in Model.Item3)
                             {
-                                totalScore += phieu.TongDiem; 
+                                totalScore += phieu.TongDiem;
                             }
                             @totalScore
                         }
