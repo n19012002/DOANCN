@@ -157,7 +157,7 @@
                     data: data,
                     success: function (response) {
                         // Thêm một bản ghi mới vào lịch sử duyệt web
-                        window.history.pushState({ path: window.location.href }, '', window.location.href);
+                        w
                         // Vô hiệu hóa nút "Lưu" sau khi đã gửi dữ liệu thành công
                         $('.btn-primary').prop('disabled', true);
                         alert(response.message); // Hiển thị thông báo thành công
@@ -188,5 +188,3 @@
         });
     </script>
 }
-
-
