@@ -50,7 +50,7 @@
     });
 
     function checkGradeSheet(selectedSemesterId) {
-        // Kiểm tra xem người dùng đã chọn học kỳ chưa
+        
         if (!selectedSemesterId) {
             alert("Vui lòng chọn học kỳ trước khi tạo phiếu.");
             return;
@@ -63,9 +63,9 @@
             success: function (response) {
                 if (response.message !== undefined) {
                     alert(response.message);
-                    $('#noGradeSheetForm').show(); // Hiển thị form để chọn tạo phiếu
+                    $('#noGradeSheetForm').show(); 
                     $('#gradeSheetForm').hide();
-                    $('#gradeSheetResult').empty(); // Xóa nội dung phiếu hiện tại (nếu có)
+                    $('#gradeSheetResult').empty(); 
                 } else {
                     $('#gradeSheetResult').html(response);
                     $('#noGradeSheetForm').hide();
@@ -79,8 +79,8 @@
 
     $(document).ready(function () {
         $('#createGradeSheetBtn').click(function () {
-            var selectedSemesterId = $('#selectedSemesterId').val(); // Lấy ID của học kỳ từ dropdown
-            createGradeSheet(selectedSemesterId); // Gọi hàm tạo phiếu chấm điểm
+            var selectedSemesterId = $('#selectedSemesterId').val(); 
+            createGradeSheet(selectedSemesterId);
         });
     });
 
@@ -92,7 +92,7 @@
             success: function (response) {
                 if (response.success) {
                     alert(response.message); // Thông báo thành công
-                    location.reload();
+                    checkGradeSheet(selectedSemesterId);
                 } else {
                     alert('Đã xảy ra lỗi khi tạo phiếu chấm điểm.');
                 }

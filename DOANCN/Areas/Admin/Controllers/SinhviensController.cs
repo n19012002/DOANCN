@@ -22,7 +22,7 @@ namespace DOANCN.Areas.Admin.Controllers
         // GET: Admin/Sinhviens
         public async Task<IActionResult> Index()
         {
-            var renluyenContext = _context.TblSinhviens.Include(t => t.MaNganhNavigation).Include(t => t.MachucvuNavigation).Include(t => t.MatrangthaiNavigation);
+            var renluyenContext = _context.TblSinhviens.Include(t => t.MaLopNavigation).Include(t => t.MaNganhNavigation).Include(t => t.MachucvuNavigation).Include(t => t.MatrangthaiNavigation);
             return View(await renluyenContext.ToListAsync());
         }
 
@@ -35,6 +35,7 @@ namespace DOANCN.Areas.Admin.Controllers
             }
 
             var tblSinhvien = await _context.TblSinhviens
+                .Include(t => t.MaLopNavigation)
                 .Include(t => t.MaNganhNavigation)
                 .Include(t => t.MachucvuNavigation)
                 .Include(t => t.MatrangthaiNavigation)
@@ -50,9 +51,10 @@ namespace DOANCN.Areas.Admin.Controllers
         // GET: Admin/Sinhviens/Create
         public IActionResult Create()
         {
-            ViewData["MaNganh"] = new SelectList(_context.TblNganhs, "MaNganh", "MaNganh");
-            ViewData["Machucvu"] = new SelectList(_context.TblChucvus, "Machucvu", "Machucvu");
-            ViewData["Matrangthai"] = new SelectList(_context.TblTrangthais, "Matrangthai", "Matrangthai");
+            ViewData["MaLop"] = new SelectList(_context.TblLops, "MaLop", "TenLop");
+            ViewData["MaNganh"] = new SelectList(_context.TblNganhs, "MaNganh", "TenNganh");
+            ViewData["Machucvu"] = new SelectList(_context.TblChucvus, "Machucvu", "Tenchucvu");
+            ViewData["Matrangthai"] = new SelectList(_context.TblTrangthais, "Matrangthai", "Tentrangthai");
             return View();
         }
 
@@ -61,7 +63,7 @@ namespace DOANCN.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Idsinhvien,Msv,Ho,TenDem,Ten,Sodienthoai,Diachi,Cccd,Gioitinh,NgayNhapHoc,MaNganh,Machucvu,Matrangthai,MatKhau,AnhDaiDien")] TblSinhvien tblSinhvien)
+        public async Task<IActionResult> Create([Bind("Idsinhvien,Msv,Ho,TenDem,Ten,Sodienthoai,Diachi,Cccd,Gioitinh,NgayNhapHoc,MaNganh,Machucvu,MaLop,Matrangthai,MatKhau,AnhDaiDien")] TblSinhvien tblSinhvien)
         {
             if (ModelState.IsValid)
             {
@@ -69,9 +71,10 @@ namespace DOANCN.Areas.Admin.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["MaNganh"] = new SelectList(_context.TblNganhs, "MaNganh", "MaNganh", tblSinhvien.MaNganh);
-            ViewData["Machucvu"] = new SelectList(_context.TblChucvus, "Machucvu", "Machucvu", tblSinhvien.Machucvu);
-            ViewData["Matrangthai"] = new SelectList(_context.TblTrangthais, "Matrangthai", "Matrangthai", tblSinhvien.Matrangthai);
+            ViewData["MaLop"] = new SelectList(_context.TblLops, "MaLop", "TenLop", tblSinhvien.MaLop);
+            ViewData["MaNganh"] = new SelectList(_context.TblNganhs, "MaNganh", "TenNganh", tblSinhvien.MaNganh);
+            ViewData["Machucvu"] = new SelectList(_context.TblChucvus, "Machucvu", "Tenchucvu", tblSinhvien.Machucvu);
+            ViewData["Matrangthai"] = new SelectList(_context.TblTrangthais, "Matrangthai", "Tentrangthai", tblSinhvien.Matrangthai);
             return View(tblSinhvien);
         }
 
@@ -83,14 +86,20 @@ namespace DOANCN.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var tblSinhvien = await _context.TblSinhviens.FindAsync(id);
+            var tblSinhvien = await _context.TblSinhviens
+               .Include(t => t.MaLopNavigation)
+               .Include(t => t.MaNganhNavigation)
+               .Include(t => t.MachucvuNavigation)
+               .Include(t => t.MatrangthaiNavigation)
+               .FirstOrDefaultAsync(m => m.Idsinhvien == id);
             if (tblSinhvien == null)
             {
                 return NotFound();
             }
-            ViewData["MaNganh"] = new SelectList(_context.TblNganhs, "MaNganh", "MaNganh", tblSinhvien.MaNganh);
-            ViewData["Machucvu"] = new SelectList(_context.TblChucvus, "Machucvu", "Machucvu", tblSinhvien.Machucvu);
-            ViewData["Matrangthai"] = new SelectList(_context.TblTrangthais, "Matrangthai", "Matrangthai", tblSinhvien.Matrangthai);
+            ViewData["MaLop"] = new SelectList(_context.TblLops, "MaLop", "TenLop", tblSinhvien.MaLopNavigation.TenLop);
+            ViewData["MaNganh"] = new SelectList(_context.TblNganhs, "MaNganh", "TenNganh", tblSinhvien.MaNganhNavigation.TenNganh);
+            ViewData["Machucvu"] = new SelectList(_context.TblChucvus, "Machucvu", "Tenchucvu", tblSinhvien.MachucvuNavigation.Tenchucvu);
+            ViewData["Matrangthai"] = new SelectList(_context.TblTrangthais, "Matrangthai", "Tentrangthai", tblSinhvien.MatrangthaiNavigation.Tentrangthai);
             return View(tblSinhvien);
         }
 
@@ -99,7 +108,7 @@ namespace DOANCN.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Idsinhvien,Msv,Ho,TenDem,Ten,Sodienthoai,Diachi,Cccd,Gioitinh,NgayNhapHoc,MaNganh,Machucvu,Matrangthai,MatKhau,AnhDaiDien")] TblSinhvien tblSinhvien)
+        public async Task<IActionResult> Edit(long id, [Bind("Idsinhvien,Msv,Ho,TenDem,Ten,Sodienthoai,Diachi,Cccd,Gioitinh,NgayNhapHoc,MaNganh,Machucvu,MaLop,Matrangthai,MatKhau,AnhDaiDien")] TblSinhvien tblSinhvien)
         {
             if (id != tblSinhvien.Idsinhvien)
             {
@@ -126,6 +135,7 @@ namespace DOANCN.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["MaLop"] = new SelectList(_context.TblLops, "MaLop", "MaLop", tblSinhvien.MaLop);
             ViewData["MaNganh"] = new SelectList(_context.TblNganhs, "MaNganh", "MaNganh", tblSinhvien.MaNganh);
             ViewData["Machucvu"] = new SelectList(_context.TblChucvus, "Machucvu", "Machucvu", tblSinhvien.Machucvu);
             ViewData["Matrangthai"] = new SelectList(_context.TblTrangthais, "Matrangthai", "Matrangthai", tblSinhvien.Matrangthai);
@@ -141,6 +151,7 @@ namespace DOANCN.Areas.Admin.Controllers
             }
 
             var tblSinhvien = await _context.TblSinhviens
+                .Include(t => t.MaLopNavigation)
                 .Include(t => t.MaNganhNavigation)
                 .Include(t => t.MachucvuNavigation)
                 .Include(t => t.MatrangthaiNavigation)

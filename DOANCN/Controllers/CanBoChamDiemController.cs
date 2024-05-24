@@ -37,7 +37,7 @@ namespace DOANCN.Controllers
         public IActionResult HienThi(int kiHocId)
         {
 
-
+            HttpContext.Session.SetInt32("Idhocky", kiHocId);
             string maNganh = HttpContext.Session.GetString("MaNganh");
             int? maLop = HttpContext.Session.GetInt32("MaLop");
 
@@ -149,9 +149,32 @@ namespace DOANCN.Controllers
             {
                 if (data != null)
                 {
+                    var idPhieu = data.Keys.FirstOrDefault();
+                    var totalLopTruongScore = 0; // Tổng điểm lớp trưởng
+
+                    // Lặp qua dữ liệu và cập nhật điểm lớp trưởng cho từng mục tiêu
                     foreach (var entry in data)
                     {
-                        var idPhieu = entry.Key;
+                        var diemList = entry.Value;
+
+                        foreach (var diemLopTruong in diemList.Values)
+                        {
+                            totalLopTruongScore += diemLopTruong;
+                        }
+                    }
+
+                    // Lưu tổng điểm vào cơ sở dữ liệu
+                    var phieu = _context.TblPhieurenluyens.FirstOrDefault(p => p.IdphieuRl == idPhieu);
+                    if (phieu != null)
+                    {
+                        // Cập nhật tổng điểm lớp trưởng
+                        phieu.DiemLopTruong = totalLopTruongScore;
+                        _context.SaveChanges(); // Lưu thay đổi vào cơ sở dữ liệu
+                    }
+
+                    // Tiếp tục cập nhật điểm cho từng mục tiêu chi
+                    foreach (var entry in data)
+                    {
                         var diemList = entry.Value;
 
                         foreach (var idMucTieuChi in diemList.Keys)
@@ -165,7 +188,7 @@ namespace DOANCN.Controllers
                             }
                             else
                             {
-                                // Xử lý khi không tìm thấy chi tiết phiếu
+                                // Xử lý trường hợp không tìm thấy chi tiết phiếu
                             }
                         }
                     }
@@ -185,6 +208,7 @@ namespace DOANCN.Controllers
                 return BadRequest(new { errorMessage = "Đã xảy ra lỗi khi lưu điểm lớp trưởng: " + ex.Message });
             }
         }
+
 
 
     }

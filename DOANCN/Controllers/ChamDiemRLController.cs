@@ -22,7 +22,8 @@ namespace DOANCN.Controllers
         [HttpPost]
         public IActionResult GradeSheet(int selectedSemesterId)
         {
-      
+
+            HttpContext.Session.SetInt32("Idhocky", selectedSemesterId);
             long? userID = HttpContext.Session.GetLong("ID");
             if (!userID.HasValue)
             {

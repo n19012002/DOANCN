@@ -23,8 +23,10 @@
 
   <ItemGroup>
     <Folder Include="Areas\Admin\Data\" />
+    <Folder Include="Services\" />
     <Folder Include="wwwroot\assets\assets\images\" />
     <Folder Include="wwwroot\assets\images\flag\" />
+    <Folder Include="wwwroot\minhchung\" />
   </ItemGroup>
 
   <ItemGroup>

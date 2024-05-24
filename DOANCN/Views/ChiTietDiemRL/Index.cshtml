@@ -9,24 +9,23 @@
         display: none;
         color: red;
     }
+
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: left;
+    }
 </style>
 
-<form id="dataForm" method="post" action="/ChiTietDiemRL/Save">
+<form id="dataForm" method="post" action="/ChiTietDiemRL/Save" enctype="multipart/form-data">
     <input type="hidden" id="idPhieu" name="idPhieu" value="@ViewData["IdPhieu"]" />
-
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        th,
-        td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
-        }
-    </style>
+    <input type="hidden" id="mucTieuChiIds" name="mucTieuChiIds" />
+    <input type="hidden" id="totalScoreInput" name="totalScore" />
 
     <main class="ttr-wrapper">
         <div class="container-fluid">
@@ -37,9 +36,10 @@
                         <thead>
                             <tr>
                                 <th>Nội dung đánh giá</th>
-                                <th>Diểm tối đa</th>
+                                <th>Điểm tối đa</th>
                                 <th>Điểm tự đánh giá</th>
                                 <th>Điểm lớp trưởng đánh giá</th>
+                                <th>Minh chứng</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -58,21 +58,25 @@
                                         <td>
                                             <input type="text" name="DiemTuDanhGia[@mucII.IdmucTieuChi]" data-thangdiem="@mucII.ThangDiem" />
                                             <br>
-                                            <span class="error-message" style="display: none; color: red;">Giá trị không hợp lệ</span>
+                                            <span class="error-message">Giá trị không hợp lệ</span>
                                         </td>
                                         <td style="display:none;">
                                             <input type="text" name="DiemLopTruongDanhGia[@mucII.IdmucTieuChi]" />
                                         </td>
+                                        <td>
+                                            @if (mucII.ChoPhepMinhChung == true)
+                                            {
+                                                <input type="file" name="minhChung[@mucII.IdmucTieuChi][]" class="file-upload" multiple />
+                                            }
+                                        </td>
                                     </tr>
                                 }
-
                             }
                         </tbody>
                     </table>
 
                     <span id="total-score">Tổng điểm: 0</span>
                     <br />
-                    <input type="hidden" id="totalScoreInput" name="totalScore" />
                     <button type="submit" class="btn btn-primary">Lưu</button>
                 </div>
             </div>
@@ -81,37 +85,36 @@
 </form>
 
 <script>
-    function validateInput() {
-        var inputs = document.querySelectorAll('input[name^="DiemTuDanhGia["]');
+    function checkPageState() {
+        return sessionStorage.getItem('pageState') === 'submitted';
+    }
 
+    function validateInputs() {
         var isValid = true;
+        var inputs = document.querySelectorAll('input[name^="DiemTuDanhGia["]');
 
         inputs.forEach(function (input) {
             var enteredValue = parseFloat(input.value);
             var thangDiem = parseFloat(input.dataset.thangdiem);
-            var errorMessage = input.parentElement.querySelector('.error-message');
+            var errorMessage = input.nextElementSibling;
 
-            if (!input.value.trim() || enteredValue > thangDiem) {
-                
+            if (isNaN(enteredValue) || enteredValue > thangDiem || enteredValue < 0) {
                 errorMessage.style.display = 'inline';
                 input.classList.add('invalid-input');
                 isValid = false;
             } else {
-               
                 errorMessage.style.display = 'none';
                 input.classList.remove('invalid-input');
             }
         });
 
-       
-        if (!isValid) {
-            event.preventDefault();
-        }
+        return isValid;
     }
 
     function calculateTotalScore() {
         var totalScore = 0;
         var inputs = document.querySelectorAll('input[name^="DiemTuDanhGia["]');
+
         inputs.forEach(function (input) {
             var enteredValue = parseFloat(input.value);
             var thangDiem = parseFloat(input.dataset.thangdiem);
@@ -119,25 +122,74 @@
                 totalScore += enteredValue;
             }
         });
+
         return totalScore;
     }
 
-    function setTotalScore() {
+    function updateTotalScore() {
         var totalScore = calculateTotalScore();
         document.getElementById('totalScoreInput').value = totalScore;
         document.getElementById('total-score').textContent = 'Tổng điểm: ' + totalScore;
     }
 
-    
-    setTotalScore();
+    document.addEventListener('input', function (event) {
+        if (event.target.matches('input[name^="DiemTuDanhGia["]')) {
+            updateTotalScore();
+        }
+    });
 
-   
-    var inputs = document.querySelectorAll('input[name^="DiemTuDanhGia["]');
-    inputs.forEach(function (input) {
-        input.addEventListener('input', function () {
-            setTotalScore();
+    var uploadedFileIds = [];
+
+    function handleFileUpload(input) {
+        var idMucTieuChi = input.name.match(/\[(\d+)\]/)[1];
+        if (!uploadedFileIds.includes(idMucTieuChi)) {
+            uploadedFileIds.push(idMucTieuChi);
+        }
+        document.getElementById('mucTieuChiIds').value = JSON.stringify(uploadedFileIds);
+    }
+
+    document.getElementById('dataForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        if (checkPageState()) {
+            alert("Bạn đã gửi phiếu. Vui lòng không spam.");
+            window.location.href = '/home';
+            return;
+        }
+
+        if (!validateInputs()) {
+            return;
+        }
+
+        // Gọi hàm handleFileUpload cho mỗi trường input file
+        var fileInputs = document.querySelectorAll('input[type="file"]');
+        fileInputs.forEach(function (input) {
+            handleFileUpload(input);
+        });
+
+        sessionStorage.setItem('pageState', 'submitted');
+
+        var formData = new FormData(this);
+
+        $.ajax({
+            url: '/ChiTietDiemRL/Save',
+            type: 'POST',
+            contentType: false,
+            processData: false,
+            data: formData,
+            success: function (response) {
+                console.log("Dữ liệu đã được gửi thành công lên server.");
+                alert("Gửi thành công");
+                window.location.href = '/ChamDiemRL';
+            },
+            error: function (xhr, status, error) {
+                console.error("Lỗi khi gửi dữ liệu lên server:", error);
+                
+            }
         });
     });
 
-    document.getElementById('dataForm').addEventListener('submit', validateInput);
+    document.addEventListener('DOMContentLoaded', function () {
+        updateTotalScore();
+    });
 </script>

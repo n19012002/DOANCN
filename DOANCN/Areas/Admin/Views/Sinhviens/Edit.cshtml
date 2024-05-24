@@ -70,6 +70,11 @@
                 <span asp-validation-for="Machucvu" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="MaLop" class="control-label"></label>
+                <select asp-for="MaLop" class="form-control" asp-items="ViewBag.MaLop"></select>
+                <span asp-validation-for="MaLop" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="Matrangthai" class="control-label"></label>
                 <select asp-for="Matrangthai" class="form-control" asp-items="ViewBag.Matrangthai"></select>
                 <span asp-validation-for="Matrangthai" class="text-danger"></span>

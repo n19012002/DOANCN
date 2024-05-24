@@ -43,6 +43,7 @@ namespace DOANCN.Controllers
                     string fullName = string.Concat(user.Ho, " ", user.TenDem, " ", user.Ten);
                     HttpContext.Session.SetString("UserName", fullName);
                     HttpContext.Session.SetLong("ID", user.Idsinhvien);
+                    HttpContext.Session.SetString("MSV",user.Msv);
                     TempData["SuccessMessage"] = "Đăng nhập thành công!";
                 }
 

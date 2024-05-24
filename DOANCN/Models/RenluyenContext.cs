@@ -16,9 +16,9 @@ public partial class RenluyenContext : DbContext
     {
     }
 
-	public DbSet<AdminMenu> AdminMenus { get; set; }
+    public DbSet<AdminMenu> AdminMenus { get; set; }
 
-	public virtual DbSet<Menu> Menus { get; set; }
+    public virtual DbSet<Menu> Menus { get; set; }
 
     public virtual DbSet<TblCanBo> TblCanBos { get; set; }
 
@@ -38,7 +38,7 @@ public partial class RenluyenContext : DbContext
 
     public virtual DbSet<TblMinhChung> TblMinhChungs { get; set; }
 
-    public virtual DbSet<TblMucTieuChi> TblMucTieuChis { get; set; }
+    public  DbSet<TblMucTieuChi> TblMucTieuChis { get; set; }
 
     public virtual DbSet<TblNganh> TblNganhs { get; set; }
 
@@ -52,7 +52,7 @@ public partial class RenluyenContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=SQL5113.site4now.net;Initial Catalog=db_aa7e1d_renluyen;User Id=db_aa7e1d_renluyen_admin;Password=Ng19012002;TrustServerCertificate=True;");
+        => optionsBuilder.UseSqlServer("Data Source=ASUSFX517\\SQLEXPRESS;Initial Catalog=Renluyen;Integrated Security=True;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -80,9 +80,7 @@ public partial class RenluyenContext : DbContext
 
             entity.ToTable("tbl_CanBo");
 
-            entity.Property(e => e.IdcanBo)
-                .ValueGeneratedNever()
-                .HasColumnName("IDCanBo");
+            entity.Property(e => e.IdcanBo).HasColumnName("IDCanBo");
             entity.Property(e => e.Idsinhvien).HasColumnName("IDSinhvien");
             entity.Property(e => e.MoTa).HasMaxLength(255);
 
@@ -118,7 +116,6 @@ public partial class RenluyenContext : DbContext
 
             entity.ToTable("tbl_Chucvu");
 
-            entity.Property(e => e.Machucvu).ValueGeneratedNever();
             entity.Property(e => e.MoTa).HasMaxLength(255);
             entity.Property(e => e.Tenchucvu).HasMaxLength(50);
         });
@@ -152,9 +149,7 @@ public partial class RenluyenContext : DbContext
 
             entity.ToTable("tbl_HocKy");
 
-            entity.Property(e => e.Idkyhoc)
-                .ValueGeneratedNever()
-                .HasColumnName("IDKyhoc");
+            entity.Property(e => e.Idkyhoc).HasColumnName("IDKyhoc");
             entity.Property(e => e.Mota).HasMaxLength(255);
             entity.Property(e => e.Tenhocky).HasMaxLength(50);
         });
@@ -165,9 +160,7 @@ public partial class RenluyenContext : DbContext
 
             entity.ToTable("tbl_Khieunai");
 
-            entity.Property(e => e.Idkhieunai)
-                .ValueGeneratedNever()
-                .HasColumnName("IDKhieunai");
+            entity.Property(e => e.Idkhieunai).HasColumnName("IDKhieunai");
             entity.Property(e => e.Idsinhvien).HasColumnName("IDSinhvien");
             entity.Property(e => e.LoaiKhieunai).HasMaxLength(50);
             entity.Property(e => e.Mota).HasMaxLength(255);
@@ -187,7 +180,6 @@ public partial class RenluyenContext : DbContext
 
             entity.ToTable("tbl_Khoa");
 
-            entity.Property(e => e.MaKhoa).ValueGeneratedNever();
             entity.Property(e => e.TenKhoa).HasMaxLength(255);
         });
 
@@ -197,7 +189,6 @@ public partial class RenluyenContext : DbContext
 
             entity.ToTable("tbl_Lop");
 
-            entity.Property(e => e.MaLop).ValueGeneratedNever();
             entity.Property(e => e.TenLop).HasMaxLength(255);
         });
 
@@ -207,9 +198,7 @@ public partial class RenluyenContext : DbContext
 
             entity.ToTable("tbl_MinhChung");
 
-            entity.Property(e => e.IdminhChung)
-                .ValueGeneratedNever()
-                .HasColumnName("IDMinhChung");
+            entity.Property(e => e.IdminhChung).HasColumnName("IDMinhChung");
             entity.Property(e => e.IdchitietPhieuRl).HasColumnName("IDChitietPhieuRL");
             entity.Property(e => e.Link).HasMaxLength(255);
             entity.Property(e => e.MoTa).HasMaxLength(255);
@@ -245,11 +234,13 @@ public partial class RenluyenContext : DbContext
             entity.ToTable("tbl_Nganh");
 
             entity.Property(e => e.MaNganh).HasMaxLength(10);
+            entity.Property(e => e.MaKhoa).ValueGeneratedOnAdd();
             entity.Property(e => e.MoTa).HasMaxLength(255);
             entity.Property(e => e.TenNganh).HasMaxLength(255);
 
             entity.HasOne(d => d.MaKhoaNavigation).WithMany(p => p.TblNganhs)
                 .HasForeignKey(d => d.MaKhoa)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_tbl_Nganh_tbl_Khoa");
         });
 
@@ -281,9 +272,7 @@ public partial class RenluyenContext : DbContext
 
             entity.ToTable("tbl_Sinhvien");
 
-            entity.Property(e => e.Idsinhvien)
-                .ValueGeneratedNever()
-                .HasColumnName("IDSinhvien");
+            entity.Property(e => e.Idsinhvien).HasColumnName("IDSinhvien");
             entity.Property(e => e.AnhDaiDien).HasMaxLength(255);
             entity.Property(e => e.Cccd)
                 .HasMaxLength(12)
@@ -323,7 +312,6 @@ public partial class RenluyenContext : DbContext
 
             entity.ToTable("tbl_Trangthai");
 
-            entity.Property(e => e.Matrangthai).ValueGeneratedNever();
             entity.Property(e => e.MoTa).HasMaxLength(255);
             entity.Property(e => e.Tentrangthai).HasMaxLength(50);
         });
@@ -334,9 +322,7 @@ public partial class RenluyenContext : DbContext
 
             entity.ToTable("tbl_TroLySV");
 
-            entity.Property(e => e.IdtroLySv)
-                .ValueGeneratedNever()
-                .HasColumnName("IDTroLySV");
+            entity.Property(e => e.IdtroLySv).HasColumnName("IDTroLySV");
             entity.Property(e => e.TenTlsv)
                 .HasMaxLength(255)
                 .HasColumnName("TenTLSV");
